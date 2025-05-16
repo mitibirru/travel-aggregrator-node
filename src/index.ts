@@ -1,12 +1,28 @@
-import express, {Request, Response} from 'express';
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/authRoutes';
+
+import { connectDB } from './helpers/db';
+
+dotenv.config();
+connectDB();
 
 const app = express();
-const port = 3000;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, TypeScript with Express!');
-});
+app.use(
+	cors({
+		origin: process.env.CLIENT_URL,
+		credentials: true
+	})
+);
+app.use(express.json());
+app.use(cookieParser());
 
+app.use('/api/auth', authRoutes);
+
+const port = process.env.PORT;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+	console.log(`Server is running on http://localhost:${port}`);
 });
